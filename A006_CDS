@@ -1,0 +1,27 @@
+@AbapCatalog.sqlViewName: 'ZBV_CRHD_CRCO_V'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Activity assgin to work center'
+define view ZBV_CRHD_CRCO_DDL
+  as select from crhd as _CRHD
+
+  association [0..1] to crco as _crco on  _crco.objty = _CRHD.objty
+                                      and _crco.objid = _CRHD.objid
+                                      and _crco.endda = '99991231'
+                                     
+
+{
+  _CRHD.werks,
+  _CRHD.arbpl,
+  _CRHD.verwe,
+  _CRHD.objty,
+  _CRHD.objid,
+  _crco[lanum = '0001'].lstar as lar01,
+  _crco[lanum = '0002'].lstar as lar02,
+  _crco[lanum = '0003'].lstar as lar03,
+  _crco[lanum = '0004'].lstar as lar04,
+  _crco[lanum = '0005'].lstar as lar05,
+  _crco[lanum = '0006'].lstar as lar06
+
+}
