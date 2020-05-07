@@ -1,0 +1,30 @@
+*&---------------------------------------------------------------------*
+*& Report zfi_corr_a006
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zfi_corr_a006.
+tables: crco,crhd,afvc.
+data: gt_crco type table of zbv_crhd_crco_v,
+      gs_crco like line of gt_crco.
+select-options: s_objid for crhd-objid.
+parameters: p_plnnr like afvc-plnnr.
+
+start-of-selection.
+
+  select * into corresponding fields of table gt_crco
+  from zbv_crhd_crco_v where objid in s_objid.
+
+  loop at gt_crco into gs_crco.
+
+    update afvc set lar01 = gs_crco-lar01
+                    lar02 = gs_crco-lar02
+                    lar03 = gs_crco-lar03
+                    lar04 = gs_crco-lar04
+                    lar05 = gs_crco-lar05
+                    lar06 = gs_crco-lar06
+                    where arbid = gs_crco-objid
+                        and plnnr = p_plnnr.
+
+    write: / gs_crco-objid, '   ' ,gs_crco-arbpl.
+  endloop.
