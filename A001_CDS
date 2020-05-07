@@ -1,0 +1,45 @@
+@AbapCatalog.sqlViewName: 'ZBV_FI_COR1_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Correct Data'
+define view ZBV_FI_COR1_DDL
+  as select from bseg as _bseg
+    inner join   lfa1 as _lfa1 on _lfa1.lifnr = _bseg.lifnr
+    inner join   bkpf as _bkpf on  _bkpf.gjahr = _bseg.gjahr
+                               and _bkpf.bukrs = _bseg.bukrs
+                               and _bkpf.belnr = _bseg.belnr
+{
+  _bseg.gjahr,
+  _bseg.bukrs,
+  _bseg.belnr,
+  _bseg.buzei,
+  _bkpf.budat,
+  _bseg.koart,
+  _bseg.lifnr as partner,
+  _bseg.vbund as vbund_fi,
+  _lfa1.vbund as vbund_new
+}
+where
+      _lfa1.vbund <> ''
+  and _bseg.lifnr >  ''
+
+union all select from bseg as _bseg
+  inner join          kna1 as _kna1 on _kna1.lifnr = _bseg.kunnr
+  inner join          bkpf as _bkpf on  _bkpf.gjahr = _bseg.gjahr
+                                    and _bkpf.bukrs = _bseg.bukrs
+                                    and _bkpf.belnr = _bseg.belnr
+{
+  _bseg.gjahr,
+  _bseg.bukrs,
+  _bseg.belnr,
+  _bseg.buzei,
+  _bkpf.budat,
+  _bseg.koart,
+  _bseg.kunnr as partner,
+  _bseg.vbund as vbund_fi,
+  _kna1.vbund as vbund_new
+
+}
+where
+      _kna1.vbund <> ''
+  and _bseg.kunnr >  ''
