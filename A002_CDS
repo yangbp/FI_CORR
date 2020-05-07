@@ -1,0 +1,21 @@
+@AbapCatalog.sqlViewName: 'ZBV_FI_VBUND_V'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Trading Partner Fixed'
+define view ZBV_FI_VBUND_DDL
+  as select from acdoca as _acdoca {
+  _acdoca.rbukrs as bukrs,
+  _acdoca.gjahr,
+  _acdoca.belnr,
+  _acdoca.buzei,
+  _acdoca.blart,
+  _acdoca.budat,
+  _acdoca.rassc,
+  _acdoca.racct,
+  _acdoca.zuonr,
+  _acdoca.sgtxt
+}
+where
+  _acdoca.rassc > '' and
+  _acdoca.blart > ''
