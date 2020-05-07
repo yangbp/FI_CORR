@@ -1,0 +1,65 @@
+*&---------------------------------------------------------------------*
+*& Report zfi_corr_a003
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zfi_corr_a003.
+tables: t001,bkpf,csks.
+data: gt_data type table of zbv_fi_pca_v,
+      gs_data like line of gt_data.
+
+data: gr_alv       type ref to cl_salv_table,
+      gr_functions
+        type ref to cl_salv_functions_list.
+
+data: lr_layout type ref to cl_salv_layout,
+      ls_key    type salv_s_layout_key.
+select-options: s_bukrs for bkpf-bukrs,
+                s_kostl for csks-kostl,
+                s_budat for bkpf-budat.
+
+parameters: p_update as checkbox.
+
+start-of-selection.
+* select data in internal table
+
+  select        * from  zbv_fi_pca_v
+    into table gt_data
+         where  bukrs in s_bukrs
+            and rcntr in s_kostl
+            and budat in s_budat.
+
+
+  if p_update = 'X'.
+
+    loop at gt_data into gs_data.
+
+      check gs_data-prctr <> gs_data-pca_new.
+      update bseg set prctr = gs_data-pca_new
+                  where gjahr = gs_data-gjahr
+                      and  bukrs =  gs_data-bukrs
+                      and  belnr =  gs_data-belnr
+                      and  buzei = gs_data-buzei.
+
+      update acdoca set prctr = gs_data-pca_new
+                  where gjahr = gs_data-gjahr
+                      and  rbukrs =  gs_data-bukrs
+                      and  belnr =  gs_data-belnr
+                      and  buzei = gs_data-buzei.
+      commit work and wait.
+      write:/ gs_data-bukrs, '' , gs_data-gjahr, ' ', gs_data-belnr.
+    endloop.
+  else.
+* create the ALV object
+    cl_salv_table=>factory(
+      importing
+        r_salv_table   = gr_alv
+      changing
+        t_table        = gt_data
+           ).
+* set default set of generic functions
+    gr_functions = gr_alv->get_functions( ).
+    gr_functions->set_all( ).
+* display it!
+    gr_alv->display( ).
+  endif.
