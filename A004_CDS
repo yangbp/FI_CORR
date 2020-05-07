@@ -1,0 +1,27 @@
+@AbapCatalog.sqlViewName: 'ZBV_FI_PCA_V'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Trading Partner Fixed'
+define view ZBV_FI_PCA_DDL
+  as select from acdoca as _acdoca
+    inner join   csks   as _csks on
+    _csks.kostl = _acdoca.rcntr  and
+    _csks.kokrs = '1000'         and
+    _csks.datbi = '99991231' {
+  _acdoca.rbukrs as bukrs,
+  _acdoca.gjahr,
+  _acdoca.belnr,
+  _acdoca.buzei,
+  _acdoca.blart,
+  _acdoca.budat,
+  _acdoca.racct,
+  _acdoca.rcntr,
+  _acdoca.prctr,
+  _csks.prctr  as pca_new,
+  _acdoca.zuonr,
+  _acdoca.sgtxt
+}
+where
+  _acdoca.blart > '' and
+  _acdoca.rcntr > ''
